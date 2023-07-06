@@ -3,6 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Microsoft.Azure.SignalR.Samples.Serverless
@@ -16,9 +17,10 @@ namespace Microsoft.Azure.SignalR.Samples.Serverless
             var serviceUtils = new ServiceUtils(connectionString);
 
             var url = GetClientUrl(serviceUtils.Endpoint, hubName);
+            var clientUrl = GetClientUrl(serviceUtils.ClientEndpoint, hubName);
 
             _connection = new HubConnectionBuilder()
-                .WithUrl(url, option =>
+                .WithUrl(clientUrl, HttpTransportType.WebSockets, option =>
                 {
                     option.AccessTokenProvider = () =>
                     {

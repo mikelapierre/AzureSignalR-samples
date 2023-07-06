@@ -18,9 +18,11 @@ namespace Microsoft.Azure.SignalR.Samples.Serverless
 
         public string AccessKey { get; }
 
+        public string ClientEndpoint { get; }
+
         public ServiceUtils(string connectionString)
         {
-            (Endpoint, AccessKey) = ParseConnectionString(connectionString);
+            (Endpoint, AccessKey, ClientEndpoint) = ParseConnectionString(connectionString);
         }
 
         public string GenerateAccessToken(string audience, string userId, TimeSpan? lifetime = null)
@@ -57,8 +59,9 @@ namespace Microsoft.Azure.SignalR.Samples.Serverless
         private static readonly char[] KeyValueSeparator = { '=' };
         private const string EndpointProperty = "endpoint";
         private const string AccessKeyProperty = "accesskey";
+        private const string ClientEndpointProperty = "clientendpoint";
 
-        internal static (string, string) ParseConnectionString(string connectionString)
+        internal static (string, string, string) ParseConnectionString(string connectionString)
         {
             var properties = connectionString.Split(PropertySeparator, StringSplitOptions.RemoveEmptyEntries);
             if (properties.Length > 1)
@@ -80,7 +83,7 @@ namespace Microsoft.Azure.SignalR.Samples.Serverless
 
                 if (dict.ContainsKey(EndpointProperty) && dict.ContainsKey(AccessKeyProperty))
                 {
-                    return (dict[EndpointProperty].TrimEnd('/'), dict[AccessKeyProperty]);
+                    return (dict[EndpointProperty].TrimEnd('/'), dict[AccessKeyProperty], dict.ContainsKey(ClientEndpointProperty) ? dict[ClientEndpointProperty].TrimEnd('/') : dict[EndpointProperty].TrimEnd('/'));
                 }
             }
 
